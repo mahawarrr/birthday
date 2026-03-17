@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maddie's Sweet 16 | Cinematic Experience</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --accent: #e5b3ba; 
+            --gold: #d4af37;
+            --chocolate: #3d1f16; 
+            --dark-choc: #2a150f;
+            --text: #ffffff;
+            --transition: all 1.2s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* --- 1. LOADER --- */
+        #loader {
+            position: fixed; inset: 0; background: #000; z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 1.5s ease;
+        }
+        .heart-pulse {
+            width: 40px; height: 40px; background: var(--accent);
+            transform: rotate(45deg); animation: pulse 1.5s infinite;
+            box-shadow: 0 0 20px var(--accent);
+        }
+        @keyframes pulse {
+            0%, 100% { transform: rotate(45deg) scale(0.8); }
+            50% { transform: rotate(45deg) scale(1.1); }
+        }
+
+        /* --- 2. GLOBAL EFFECTS --- */
+        #particles { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 1; }
+
+        section {
+            min-height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; position: relative;
+            padding: 80px 20px; z-index: 2; opacity: 0;
+            transform: translateY(40px); transition: var(--transition);
+        }
+        section.visible { opacity: 1; transform: translateY(0); }
+
+        .btn {
+            padding: 18px 45px; background: transparent; border: 1px solid var(--accent);
+            color: var(--accent); text-transform: uppercase; letter-spacing: 3px;
+            cursor: pointer; margin-top: 40px; transition: 0.4s; font-size: 0.8rem;
+        }
+        .btn:hover { background: var(--accent); color: #000; box-shadow: 0 0 30px rgba(229, 179, 186, 0.4); }
+        .btn-blue { background: #3498db; border: none; color: white; border-radius: 5px; }
+        
+        /* --- 3. MUSIC CONTROL --- */
+        #music-toggle {
+            position: fixed; top: 20px; right: 20px; z-index: 1001;
+            background: rgba(255,255,255,0.1); border: 1px solid var(--accent);
+            color: var(--accent); width: 45px; height: 45px; border-radius: 50%;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(5px); transition: 0.3s;
+        }
+
+        /* --- 4. HERO --- */
+        h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 8vw, 5rem); text-align: center; }
+        .subtext { font-weight: 300; letter-spacing: 5px; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+
+        /* --- 5. CHOCOLATE CAKE --- */
+        .cake-scene { position: relative; width: 350px; height: 320px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+        .topper-16 {
+            position: absolute; bottom: 165px; 
+            font-family: 'Playfair Display'; font-size: 4.5rem; font-weight: 700;
+            background: linear-gradient(135deg, #d4af37, #f7ef8a, #d4af37);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5)); z-index: 20;
+        }
+        .tier { position: relative; background: linear-gradient(to right, var(--dark-choc), var(--chocolate), var(--dark-choc)); box-shadow: inset 0 -5px 15px rgba(0,0,0,0.6); }
+        .tier-top { width: 180px; height: 80px; border-radius: 90px / 35px; z-index: 5; }
+        .tier-bottom { width: 260px; height: 100px; border-radius: 130px / 45px; margin-top: -45px; z-index: 1; }
+        .frosting-top { position: absolute; top: 0; width: 100%; height: 35px; background: radial-gradient(ellipse, var(--chocolate), var(--dark-choc)); border-radius: 100%; }
+        .candle-container { position: absolute; top: -10px; left: 0; width: 100%; height: 10px; display: flex; justify-content: center; gap: 20px; z-index: 10; }
+        .candle { position: relative; width: 7px; height: 38px; background: linear-gradient(to bottom, #fff, #f0f0f0); border-radius: 3px; }
+        .flame { position: absolute; top: -18px; left: -3px; width: 12px; height: 22px; background: radial-gradient(circle at bottom, #fff, orange, transparent); border-radius: 50% 50% 20% 20%; animation: flicker 0.1s infinite alternate; box-shadow: 0 0 15px orange; }
+        @keyframes flicker { from { transform: scale(1); } to { transform: scale(1.1) rotate(2deg); } }
+
+        /* --- 6. GALLERY & LETTER --- */
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; width: 100%; max-width: 1000px; }
+        .gallery-item { height: 350px; overflow: hidden; border: 10px solid white; border-bottom: 40px solid white; box-shadow: 0 15px 30px rgba(0,0,0,0.5); transform: rotate(-2deg); transition: 0.5s; }
+        .gallery-item:nth-child(even) { transform: rotate(2deg); }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: 0.8s; }
+        .gallery-item:hover { transform: rotate(0deg) scale(1.02); z-index: 10; }
+        .gallery-item:hover img { filter: grayscale(0); }
+
+        #letter-content { max-width: 650px; text-align: center; line-height: 2; font-size: 1.1rem; color: rgba(255,255,255,0.8); min-height: 150px; }
+        
+        /* --- 7. MILO THE HOST --- */
+        #milo-container { position: fixed; bottom: 20px; right: 20px; width: 130px; z-index: 1000; pointer-events: none; display: flex; flex-direction: column; align-items: center; }
+        #milo-bubble { background: white; color: #333; padding: 12px; border-radius: 15px; font-size: 0.85rem; font-weight: 600; width: 160px; text-align: center; margin-bottom: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.4); opacity: 0; transform: scale(0.8); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
+        #milo-bubble::after { content: ''; position: absolute; bottom: -8px; right: 40px; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 8px solid white; }
+        .bear-body { animation: bearBreath 4s infinite ease-in-out; transform-origin: center bottom; }
+        .bear-eye { animation: bearBlink 5s infinite; }
+        @keyframes bearBreath { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+        @keyframes bearBlink { 0%, 90%, 94%, 100% { transform: scaleY(1); } 92% { transform: scaleY(0.1); } }
+
+        #wish-message { opacity: 0; transition: 2s; color: var(--accent); margin-top: 20px; text-transform: uppercase; font-size: 0.8rem; }
+        .scroll-hint { position: absolute; bottom: 30px; opacity: 0; transition: 2s; text-align: center; color: var(--accent); }
+        .arrow { width: 15px; height: 15px; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent); transform: rotate(45deg); margin: 10px auto; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0) rotate(45deg);} 40% {transform: translateY(-10px) rotate(45deg);} }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop preload="auto">
+        <source src="birthday.mp3" type="audio/mpeg">
+    </audio>
+
+    <button id="music-toggle" onclick="toggleMusic()">🎵</button>
+
+    <div id="loader">
+        <div class="heart-pulse"></div>
+        <div style="margin-top: 30px; font-family: 'Playfair Display'; font-style: italic; letter-spacing: 2px;">Chapter 16: Maddie</div>
+    </div>
+
+    <div id="milo-container">
+        <div id="milo-bubble">Hi Maddie! 👋</div>
+        <svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" style="width: 120px; height: auto; filter: drop-shadow(0 8px 15px rgba(0,0,0,0.4));">
+            <g class="bear-body">
+                <circle cx="65" cy="45" r="22" fill="#8d5524"/> 
+                <circle cx="65" cy="45" r="12" fill="#c68642"/> 
+                <circle cx="135" cy="45" r="22" fill="#8d5524"/>
+                <circle cx="135" cy="45" r="12" fill="#c68642"/>
+                <rect x="55" y="95" width="90" height="95" rx="35" fill="#cc0000"/>
+                <path d="M 55 135 L 145 135 L 145 190 Q 100 200 55 190 Z" fill="#1a1a1a"/> 
+                <rect x="97" y="95" width="6" height="95" fill="#ffffff" opacity="0.8"/> 
+                <path d="M 55 115 Q 35 125 45 160" stroke="#cc0000" stroke-width="22" stroke-linecap="round" fill="none"/>
+                <path d="M 145 115 Q 165 125 155 160" stroke="#cc0000" stroke-width="22" stroke-linecap="round" fill="none"/>
+                <circle cx="100" cy="75" r="58" fill="#8d5524"/>
+                <ellipse cx="100" cy="95" rx="28" ry="22" fill="#f3d0a6"/> 
+                <path d="M 90 92 Q 100 102 110 92" stroke="#4a2c11" stroke-width="2.5" fill="none" stroke-linecap="round"/> 
+                <ellipse cx="100" cy="85" rx="8" ry="5" fill="#2a150f"/>
+                <circle class="bear-eye" cx="80" cy="72" r="5" fill="#1a1a1a" style="transform-origin: 80px 72px;"/>
+                <circle class="bear-eye" cx="120" cy="72" r="5" fill="#1a1a1a" style="transform-origin: 120px 72px;"/>
+            </g>
+        </svg>
+    </div>
+
+    <canvas id="particles"></canvas>
+
+    <section id="hero">
+        <p class="subtext">A Cinematic Celebration</p>
+        <h1>Maddie</h1>
+        <button class="btn" onclick="nextSection('cake-moment')">Enter Her World</button>
+    </section>
+
+    <section id="cake-moment">
+        <div class="cake-scene">
+            <div class="topper-16">16</div>
+            <div class="tier tier-top">
+                <div class="frosting-top"></div>
+                <div class="candle-container">
+                    <div class="candle"><div class="flame"></div></div>
+                    <div class="candle" style="margin-top: -8px;"><div class="flame"></div></div>
+                    <div class="candle"><div class="flame"></div></div>
+                </div>
+            </div>
+            <div class="tier tier-bottom">
+                <div class="frosting-top"></div>
+            </div>
+        </div>
+        <h2 style="font-family: 'Playfair Display'; font-style: italic; margin-top: 40px; font-size: 2rem;">Close your eyes, make a wish.</h2>
+        <p id="wish-message">The best is yet to come, Maddie.</p>
+        <button class="btn btn-blue" id="blow-btn" onclick="blowCandles()">Blow-Out the Candles</button>
+        <div class="scroll-hint" id="scroll-hint"><span>Scroll Down</span><div class="arrow"></div></div>
+    </section>
+
+    <section id="gallery">
+        <p class="subtext" style="margin-bottom: 40px;">Sweet Memories</p>
+        <div class="gallery-grid">
+            <div class="gallery-item"><img src="https://i.ibb.co/gMNtcVrG/Screenshot-20260226-104419-Instagram-3.jpg" alt="Memory 1"></div>
+            <div class="gallery-item"><img src="https://i.ibb.co/mCCVQs17/Screenshot-20260226-151700-Photos-2.jpg" alt="Memory 2"></div>
+            <div class="gallery-item"><img src="https://i.ibb.co/8n6GtzK2/Screenshot-20260226-153411-Photos.png" alt="Memory 3"></div>
+        </div>
+        <button class="btn" onclick="nextSection('final-letter')">Read the Letter</button>
+    </section>
+
+    <section id="final-letter">
+        <div id="letter-content"></div>
+        <div id="signature" style="opacity: 0; margin-top: 40px; transition: 3s; font-family: 'Playfair Display'; color: var(--accent); font-size: 1.5rem;">Forever & Always.</div>
+    </section>
+
+    <script>
+        const bgMusic = document.getElementById('bgMusic');
+        const bubble = document.getElementById('milo-bubble');
+
+        function updateHost(text) {
+            bubble.style.opacity = '0';
+            setTimeout(() => {
+                bubble.innerText = text;
+                bubble.style.opacity = '1';
+                bubble.style.transform = 'scale(1)';
+            }, 400);
+        }
+
+        // Music Toggle Logic
+        function toggleMusic() {
+            const btn = document.getElementById('music-toggle');
+            if (bgMusic.paused) {
+                bgMusic.play();
+                btn.innerText = "🎵";
+            } else {
+                bgMusic.pause();
+                btn.innerText = "🔇";
+            }
+        }
+
+        function nextSection(id) {
+            // Start Music on first interaction
+            if(bgMusic.paused) {
+                bgMusic.volume = 0;
+                bgMusic.play().then(() => {
+                    let fade = setInterval(() => {
+                        if(bgMusic.volume < 0.45) bgMusic.volume += 0.05;
+                        else clearInterval(fade);
+                    }, 200);
+                }).catch(e => console.log("Audio block: Tap to play"));
+            }
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => { 
+                    document.getElementById('loader').style.display = 'none'; 
+                    document.getElementById('hero').classList.add('visible'); 
+                    updateHost("Welcome to your Sweet 16, Maddie! ✨");
+                }, 1500);
+            }, 2500);
+        });
+
+        function blowCandles() {
+            const flames = document.querySelectorAll('.flame');
+            flames.forEach((f, i) => {
+                setTimeout(() => {
+                    f.style.opacity = "0";
+                    f.style.transform = "scale(0)";
+                }, i * 200);
+            });
+            document.getElementById('blow-btn').style.display = "none";
+            document.getElementById('wish-message').style.opacity = "1";
+            document.getElementById('scroll-hint').style.opacity = "1";
+            triggerConfetti();
+            updateHost("WOHOO! Happy Birthday! 🎂✨");
+        }
+
+        function triggerConfetti() {
+            for(let i=0; i<100; i++) {
+                const c = document.createElement('div');
+                c.style.cssText = `position:fixed; left:50%; top:50%; width:${Math.random()*8}px; height:${Math.random()*8}px; background:${['#e5b3ba','#d4af37','#fff'][Math.floor(Math.random()*3)]}; z-index:100; pointer-events:none; border-radius:50%;`;
+                document.body.appendChild(c);
+                const a = Math.random() * Math.PI * 2, v = Math.random() * 12 + 6;
+                let x=0, y=0, g=0;
+                const interval = setInterval(() => {
+                    x += Math.cos(a) * v; y += Math.sin(a) * v + g; g += 0.35;
+                    c.style.transform = `translate(${x}px, ${y}px)`;
+                    if(y > window.innerHeight) { clearInterval(interval); c.remove(); }
+                }, 20);
+            }
+        }
+
+        const text = "Maddie, sixteen years ago today, the world became a brighter place. You have grown into a person of such kindness, strength, and brilliance. Watching you step into your Sweet 16 is a privilege. May this new chapter bring you as much happiness as you bring to everyone around you. You are loved, today and always.";
+        let index = 0, hasTyped = false;
+        function startTypewriter() {
+            if(hasTyped) return;
+            hasTyped = true;
+            const container = document.getElementById('letter-content');
+            const timer = setInterval(() => {
+                if (index < text.length) {
+                    container.innerHTML += text.charAt(index);
+                    index++;
+                } else {
+                    clearInterval(timer);
+                    document.getElementById('signature').style.opacity = "1";
+                }
+            }, 50);
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if(e.isIntersecting) {
+                    e.target.classList.add('visible');
+                    if(e.target.id === 'cake-moment') updateHost("Make a wish, Maddie! 🕯️");
+                    if(e.target.id === 'gallery') updateHost("Look at these memories! 😍");
+                    if(e.target.id === 'final-letter') {
+                        updateHost("A special letter for you... 💌");
+                        startTypewriter();
+                    }
+                }
+            });
+        }, { threshold: 0.3 });
+        document.querySelectorAll('section').forEach(s => observer.observe(s));
+
+        // Background Particles
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        let pts = [];
+        function init() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            pts = [];
+            for(let i=0; i<60; i++) pts.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*1.5, vx: Math.random()*0.4-0.2, vy: Math.random()*0.4-0.2 });
+        }
+        function animate() {
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+            pts.forEach(p => {
+                p.x += p.vx; p.y += p.vy;
+                if(p.x<0 || p.x>canvas.width) p.vx *= -1;
+                if(p.y<0 || p.y>canvas.height) p.vy *= -1;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+            });
+            requestAnimationFrame(animate);
+        }
+        window.addEventListener('resize', init);
+        init(); animate();
+    </script>
+</body>
+</html>
